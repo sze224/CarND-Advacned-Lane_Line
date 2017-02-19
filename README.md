@@ -69,5 +69,23 @@ Now that all useful pixels are identified, a second order polynomial function (A
 
 Overlaying Images:
 -------------------------------------
+Now that there is an estimate of the potential location of the lines, the next step is to map that back to the original image. First, an image of that shows where the line is is created. To create that image, all the pixal between the 2 predicted lane are filled in.
+<img width="986" alt="screen shot 2017-02-18 at 8 13 33 pm" src="https://cloud.githubusercontent.com/assets/22971963/23099231/d44bcf66-f616-11e6-8adc-f500827152ee.png">
+Then transform the image into the original image space using the Inverse transformation matrix
+<img width="990" alt="screen shot 2017-02-18 at 8 17 48 pm" src="https://cloud.githubusercontent.com/assets/22971963/23099260/605bb232-f617-11e6-8aa9-1747cf22e39e.png">
+Over that image with the original image
+<img width="993" alt="screen shot 2017-02-18 at 8 20 26 pm" src="https://cloud.githubusercontent.com/assets/22971963/23099280/b85800d0-f617-11e6-8c99-7e4b49f79eb4.png">
+
+Calculating curvature:
+-------------------------------------
+Another way to check the accuracy of the estimation is to look at the curvature of the lanes to see if it make sense. The equation of radius of curvature is given by:
+
+<img width="186" alt="screen shot 2017-02-18 at 8 44 19 pm" src="https://cloud.githubusercontent.com/assets/22971963/23099418/16c66136-f61b-11e6-93fc-865b2c0dda6c.png">
+
+where A and B are the coefficient calculated above, and y is the value of the bottom of the image (height of image).
+After calculating the radius, the value need to be convert into meter because so far the calulation is taking pixal as an input. (x: 3.7 meter per 700 pixal, y: 30 meter per 720 pixal)
+<img width="992" alt="screen shot 2017-02-18 at 9 09 56 pm" src="https://cloud.githubusercontent.com/assets/22971963/23099544/aec42ccc-f61e-11e6-9042-fe1e16116e74.png">
+
+
 
 
