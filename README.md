@@ -94,10 +94,10 @@ https://youtu.be/YwPZ2TFLY4U
 Reflection:
 -------------------------------------
 Currently, this pipeline is still not robust to lighting change and it will require further tuning of the parameter. A few thing that I am planning to work on is to apply the following sanity checks to make the pipeline more robust.
-1) weight the contribution for color threshold image and the gradient image. This will allow the pipeline to get a more accurate image to process on.
-2) Check the slope of left and right lanes. Since the lanes should be roughly parallel to each other.
-3) Check the curvature of each lane, reject curvature with unrealistic number
-4) Check the basepoint of the lane, from frame to frame there shouldn't a significant change
-5) The number of nonzero pixal in the image, if there is a significant increase in pixal, there it is safe to assume that there is a lighting change and the image should not be trusted
+* weight the contribution for color threshold image and the gradient image. This will allow the pipeline to get a more accurate image to process on.
+* Check the slope of left and right lanes. Since the lanes should be roughly parallel to each other.
+* Check the curvature of each lane, reject curvature with unrealistic number
+* Check the basepoint of the lane, from frame to frame there shouldn't a significant change
+* The number of nonzero pixal in the image, if there is a significant increase in pixal, there it is safe to assume that there is a lighting change and the image should not be trusted
 
 
