@@ -53,19 +53,22 @@ Now that there are 2 methods to estimate where the lane lines are located, it is
 Lane finding using histogram:
 -------------------------------------
 Now that there is a image that provide an estimate on where the lane lines are, it is time to find where the locate is actually located at. To do this, I used a histogram method and determined the peak (point with the most pixel) in the x-axis.
-<img width="999" alt="screen shot 2017-02-18 at 4 19 30 pm" src="https://cloud.githubusercontent.com/assets/22971963/23097929/134805ac-f5f6-11e6-9412-dafdf0c410cc.png">
-In looking at the histogram, there are 2 peaks (one for the left lane and one for the right lane) that are more apparent and this is a good place to start the lanes search in the image.
+
+<img width="991" alt="screen shot 2017-02-27 at 9 23 08 pm" src="https://cloud.githubusercontent.com/assets/22971963/23392791/f81af8cc-fd32-11e6-924c-edbafcef9dbc.png">
+
+This is also the place where the first sansity check is applied. One thing that is assumed here is that the camera is mounted in middle of the car. This mean that there is an expected range and location in where the lane will start. In this case I decided to have an expected start point to be between midpoint +/- 100 and midpoint +/- 200 where + is for the right lane and - is for the left lane. In looking at the histogram, there are 2 peaks (one for the left lane and one for the right lane) that are in the expected range and this is a good place to start the lanes search in the image.
 
 Once the base points are identified, I can now deploy the window sliding method starting from the base point and identify the lanes in the image. The window sliding method breaks the image down into n sections in the y-axis. Using a window of a specific size, the window will continue to slide up and look for the where the lane lines are located. The image below shows the result of the window sliding method with 9 windows.
-<img width="988" alt="screen shot 2017-02-18 at 5 17 10 pm" src="https://cloud.githubusercontent.com/assets/22971963/23098236/1e7f8334-f5fe-11e6-8d40-3cb47734d873.png">
 
-Every pixal within the 9 windows (indicated in red) are considered a good candidate of where the lane lines are located. 
+<img width="990" alt="screen shot 2017-02-27 at 9 36 33 pm" src="https://cloud.githubusercontent.com/assets/22971963/23393048/d6d0a44e-fd34-11e6-85da-e508256decf1.png">
+
+Every pixal within the 9 windows are considered a good candidate of where the lane lines are located. 
 
 Fitting a second order polynomial:
 -------------------------------------
 Now that all useful pixels are identified, a second order polynomial function (Ax^2 + Bx + C) can be fitted to describe the lane lines. 
 
-<img width="987" alt="screen shot 2017-02-18 at 5 34 44 pm" src="https://cloud.githubusercontent.com/assets/22971963/23098378/9375177e-f600-11e6-8154-b2b7fef1443a.png">
+<img width="992" alt="screen shot 2017-02-27 at 9 47 51 pm" src="https://cloud.githubusercontent.com/assets/22971963/23393244/6b93d97e-fd36-11e6-97ea-a85fc5183e33.png">
 
 Overlaying Images:
 -------------------------------------
