@@ -6,6 +6,7 @@ In this project, the goal is to create robust pipeline that can identify the the
 
 The pipeline that I ended up with broken down into the following sections:
 
+* Camera Calibration
 * Perspective Transorm
 * Using color threshold
 * Using gradient threshold
@@ -15,29 +16,39 @@ The pipeline that I ended up with broken down into the following sections:
 * Overlaying Images
 * Calculating curvature
 
+Camera Calibration:
+-------------------------------------
+Each camera lens have its own unique curvature and therefore will distort the image differently. When working with images, it is important to undistort the image so we can accurate get the respresentation and the correct information of the scene. With the help of openCV, this process is easy. The concept behind this is to find a known shape so we will be able to detect and correct the distortion. One of the most common object to use is a chessboard because the pattern makes it easy to detect. To get an accurate transform, we often want at least 20 different images of chessboard, taken from different angle and distance. Below show an image where openCV found the corner of the chessboard. The same transform is then used in the image on the road.
+
+<img width="1267" alt="screen shot 2017-02-27 at 8 20 06 pm" src="https://cloud.githubusercontent.com/assets/22971963/23391493/3ba03a16-fd2a-11e6-83d7-5c1cb388d617.png">
+
+<img width="996" alt="screen shot 2017-02-27 at 8 34 46 pm" src="https://cloud.githubusercontent.com/assets/22971963/23391793/3a56a3a0-fd2c-11e6-95a5-2916cb0d04ba.png">
+
 Perspective Transform:
 -------------------------------------
-In order to get a better view of how the lane lines are looking ahead, it is useful to get a bird eye view of the image. In order to achieve that, I defined the source points in the original image and define the destination points that I want the source points to located in the new image space. With the help of getPerspectiveTransform from cv2, it is easy to get the transformation and inverse transformation matrix that transform the image to the different image space. In the images below, the source point are defined by the 4 red circles, and the same four circles show up in the bird eye image as well.
-<img width="1002" alt="screen shot 2017-02-18 at 2 22 23 pm" src="https://cloud.githubusercontent.com/assets/22971963/23097318/c663a274-f5e5-11e6-845e-0bb2620305f1.png">
-The goal in doing this transformation is to get a bird eye view of the lane lines, this is a much better visualization of the lane lines and it is much easier to do further analysis on. In the original image perspective, none of the lane lines appear to be parallel to one another (which is not the actual case). In the bird view though, it is really easy to see the parallel lane lines.
+In order to get a better view of how the lane lines are looking ahead, it is useful to get a bird eye view of the image. In order to achieve that, I defined the source points in the original image and define the destination points that I want the source points to located in the new image space. With the help of getPerspectiveTransform from cv2, it is easy to get the transformation and inverse transformation matrix that transform the image to the different image space. The image below shows the undistorted image and the corresponding bird eye transformation.
+
+<img width="1001" alt="screen shot 2017-02-27 at 8 48 43 pm" src="https://cloud.githubusercontent.com/assets/22971963/23392084/29c4ceb6-fd2e-11e6-9d3c-3c4195a67dcc.png">
+
+The goal in doing this transformation is to get a bird eye view of the lane lines, this is a much better visualization of the lane lines and it is much easier to do further analysis on. In the original image perspective, none of the lane lines appear to be parallel to one another (which they should be). In the bird view though, it is easy to see that the lanes appear to be somewhat parallel.
 
 Using color threshold:
 -------------------------------------
 Once the bird eye view of the image is obtained, the next step is to identify where the lane lines are potentially located. This section focus on using the color threshold to identify that. One characteristic of the lane lines is that they are either yellow or white. Therefore, by applying a color threshold to the image, I can isolate out the white and yellow lanes while ignoring the other distraction. However, this technique is sensitive to the lighting of the condition, as the same color can appear differently in different light condition. The threshold that I ended up took many tuning in hope to cover as many condition as possible. Below are the result to isolate the lane lines based on color threshold.
-<img width="999" alt="screen shot 2017-02-18 at 2 52 02 pm" src="https://cloud.githubusercontent.com/assets/22971963/23097485/d8445296-f5e9-11e6-8256-3cc8e26a2b84.png">
+
+<img width="1010" alt="screen shot 2017-02-27 at 9 00 15 pm" src="https://cloud.githubusercontent.com/assets/22971963/23392341/cf237da2-fd2f-11e6-834a-a24730b59e62.png">
 
 Using gradient threshold:
 -------------------------------------
-In many cases, using only color threshold is not sufficient enough to estimate where the lane lines are located, especially in varying light condition. Another technique that I am using is the gradient threshold. The technique involve the use of sobel filters, in which the filter is taking the derivative of the pixel. The resulting image will show the places in the image where there are rapid change (an edge). The following images show the result of using the sobel filter and applying a threshold to it (Sobel filter in x-dir (sx), Sobel filter in y-dir (sy), mag of sx and sy (mag), dir of sx and sy (dir)).
-<img width="996" alt="screen shot 2017-02-18 at 3 29 40 pm" src="https://cloud.githubusercontent.com/assets/22971963/23097691/1c2e529a-f5ef-11e6-9e67-91d4e7c2a8a8.png">
-After getting these results, I then combined them into one image and use that as an estimation on where the lane lines are potentially located at. In this case, I ingored the result from sy as I don't believe it will any additional information.
-<img width="993" alt="screen shot 2017-02-18 at 3 41 59 pm" src="https://cloud.githubusercontent.com/assets/22971963/23097735/d16c67c2-f5f0-11e6-9235-60261bf6d6d5.png">
+In many cases, using only color threshold is not sufficient enough to estimate where the lane lines are located, especially in varying light condition. Another technique that I am using is the gradient threshold. The technique involve the use of sobel filters, in which the filter is taking the derivative of the pixel. The resulting image will show the places in the image where there are rapid change (an edge). 4 uses of sobel filter are used and a threshold to each (Sobel filter in x-dir (sx), Sobel filter in y-dir (sy), mag of sx and sy (mag), dir of sx and sy (dir)). These results are then combined into one image and used as an estimation on where the lane lines are potentially located at. In this case, I ingored the result from sy as I don't believe it will any additional information.
+
+<img width="992" alt="screen shot 2017-02-27 at 9 07 47 pm" src="https://cloud.githubusercontent.com/assets/22971963/23392553/4c1e51c8-fd31-11e6-90d2-c47b4220a340.png">
 
 Combining gradient and color threshold:
 -------------------------------------
 Now that there are 2 methods to estimate where the lane lines are located, it is time to combine both threshold and get a more accurate estimate of the lane lines. Even though, there will still be noise in the image that is not the lane lines, but it is a good starting point to perform further analysis.
 
-<img width="988" alt="screen shot 2017-02-18 at 3 50 35 pm" src="https://cloud.githubusercontent.com/assets/22971963/23097771/07f6bc1a-f5f2-11e6-819a-07f57c8c66ca.png">
+<img width="998" alt="screen shot 2017-02-27 at 9 16 57 pm" src="https://cloud.githubusercontent.com/assets/22971963/23392645/19e2521c-fd32-11e6-92a2-f8c0b3028e80.png">
 
 Lane finding using histogram:
 -------------------------------------
