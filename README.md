@@ -73,11 +73,8 @@ Now that all useful pixels are identified, a second order polynomial function (A
 Overlaying Images:
 -------------------------------------
 Now that there is an estimate of the potential location of the lines, the next step is to map that back to the original image. First, an image of that shows where the line is is created. To create that image, all the pixal between the 2 predicted lane are filled in.
-<img width="986" alt="screen shot 2017-02-18 at 8 13 33 pm" src="https://cloud.githubusercontent.com/assets/22971963/23099231/d44bcf66-f616-11e6-8adc-f500827152ee.png">
-Then transform the image into the original image space using the Inverse transformation matrix
-<img width="990" alt="screen shot 2017-02-18 at 8 17 48 pm" src="https://cloud.githubusercontent.com/assets/22971963/23099260/605bb232-f617-11e6-8aa9-1747cf22e39e.png">
-Over that image with the original image
-<img width="993" alt="screen shot 2017-02-18 at 8 20 26 pm" src="https://cloud.githubusercontent.com/assets/22971963/23099280/b85800d0-f617-11e6-8c99-7e4b49f79eb4.png">
+
+<img width="995" alt="screen shot 2017-02-27 at 9 57 52 pm" src="https://cloud.githubusercontent.com/assets/22971963/23393455/d1f55e80-fd37-11e6-8a9a-1496ec31261c.png">
 
 Calculating curvature:
 -------------------------------------
@@ -87,8 +84,20 @@ Another way to check the accuracy of the estimation is to look at the curvature 
 
 where A and B are the coefficient calculated above, and y is the value of the bottom of the image (height of image).
 After calculating the radius, the value need to be convert into meter because so far the calulation is taking pixal as an input. (x: 3.7 meter per 700 pixal, y: 30 meter per 720 pixal)
-<img width="992" alt="screen shot 2017-02-18 at 9 09 56 pm" src="https://cloud.githubusercontent.com/assets/22971963/23099544/aec42ccc-f61e-11e6-9042-fe1e16116e74.png">
 
+<img width="991" alt="screen shot 2017-02-27 at 10 02 34 pm" src="https://cloud.githubusercontent.com/assets/22971963/23393555/7b0dd060-fd38-11e6-8628-606a2d4b7a52.png">
 
+Video Result:
+-------------------------------------
+https://youtu.be/YwPZ2TFLY4U
+
+Reflection:
+-------------------------------------
+Currently, this pipeline is still not robust to lighting change and it will require further tuning of the parameter. A few thing that I am planning to work on is to apply the following sanity checks to make the pipeline more robust.
+1) weight the contribution for color threshold image and the gradient image. This will allow the pipeline to get a more accurate image to process on.
+2) Check the slope of left and right lanes. Since the lanes should be roughly parallel to each other.
+3) Check the curvature of each lane, reject curvature with unrealistic number
+4) Check the basepoint of the lane, from frame to frame there shouldn't a significant change
+5) The number of nonzero pixal in the image, if there is a significant increase in pixal, there it is safe to assume that there is a lighting change and the image should not be trusted
 
 
